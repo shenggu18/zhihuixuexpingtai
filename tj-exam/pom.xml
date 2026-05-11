@@ -95,7 +95,7 @@
         <dependency>
             <artifactId>seata-spring-boot-starter</artifactId>
             <groupId>io.seata</groupId>
-            <version>${seata-version}</version>
+            <version>1.7.0</version>
         </dependency>
     </dependencies>
     <build>
