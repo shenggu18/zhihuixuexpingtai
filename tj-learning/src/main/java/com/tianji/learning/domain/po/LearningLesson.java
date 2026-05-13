@@ -90,4 +90,5 @@ public class LearningLesson implements Serializable {
     private LocalDateTime updateTime;
 
 
+    private LocalDateTime finishTime;
 }
