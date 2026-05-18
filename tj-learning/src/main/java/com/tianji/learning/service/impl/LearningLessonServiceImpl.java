@@ -231,6 +231,49 @@ public class LearningLessonServiceImpl extends ServiceImpl<LearningLessonMapper,
         return result.pageInfo(p.getTotal(), p.getPages(), voList);
     }
 
+    @Override
+    public Long isLessonVaild(Long courseId) {
+        //1.获取当前登录用户id
+        Long userId = UserContext.getUser();
+
+        //2.查询当前用户的课表learning_lesson    条件:user_id  course_id
+        LearningLesson lesson = lambdaQuery()
+                .eq(LearningLesson::getUserId, userId)
+                .eq(LearningLesson::getCourseId, courseId)
+                .one();//联合唯一索引，最多只能查出一条数据
+        if (lesson == null) {
+            return null;
+        }
+
+        //3.校验课程是否过期
+        LocalDateTime expireTime = lesson.getExpireTime();
+        LocalDateTime now = LocalDateTime.now();
+        if (now.isAfter(expireTime)) {  //当前时间已经在过期时间之后，即过期
+            return null;
+        }
+
+        return lesson.getId();
+    }
+
+    @Override
+    public LearningLessonVO queryLessonByCourseId(Long courseId) {
+        //1.获取当前登录用户id
+        Long userId = UserContext.getUser();
+
+        //2.查询当前用户的课表learning_lesson    条件:user_id  course_id
+        LearningLesson lesson = lambdaQuery()
+                .eq(LearningLesson::getUserId, userId)
+                .eq(LearningLesson::getCourseId, courseId)
+                .one();//联合唯一索引，最多只能查出一条数据
+        if (lesson == null) {
+            return null;
+        }
+
+        //3.po转vo返回
+        LearningLessonVO vo = BeanUtils.copyBean(lesson, LearningLessonVO.class);
+        return vo;
+    }
+
 
     private Map<Long, CourseSimpleInfoDTO> queryCourseSimpleInfoList(List<LearningLesson> records) {
         // 3.1.获取课程id
